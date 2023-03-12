@@ -72,7 +72,7 @@ public class WatchFolderChecker : BackgroundService
                 {
                     var fileInfo = new FileInfo(torrentFile);
 
-                    if (fileInfo.Extension != ".magnet" && fileInfo.Extension != ".torrent")
+                    if (fileInfo.Extension != ".magnet" && fileInfo.Extension != ".torrent" && fileInfo.Extension != ".nzb")
                     {
                         continue;
                     }
@@ -112,7 +112,11 @@ public class WatchFolderChecker : BackgroundService
                             var magnetLink = await File.ReadAllTextAsync(torrentFile, stoppingToken);
                             await torrentService.UploadMagnet(magnetLink, torrent);
                         }
-
+                        else if (fileInfo.Extension == ".nzb")
+                        {
+                            var torrentFileContents = await File.ReadAllBytesAsync(torrentFile, stoppingToken);
+                            await torrentService.UploadNzb(torrentFileContents, torrent);
+                        }
                         var processedPath = Path.Combine(processedStorePath, fileInfo.Name);
 
                         if (!Directory.Exists(processedStorePath))

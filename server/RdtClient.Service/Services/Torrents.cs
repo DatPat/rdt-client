@@ -150,6 +150,18 @@ public class Torrents
 
         return newTorrent;
     }
+    public async Task<Torrent> UploadNzb(Byte[] bytes, Torrent torrent)
+    {
+        var fileAsBase64 = Convert.ToBase64String(bytes);
+
+        var id = await _torrentClient.AddFile(bytes);
+
+        var newTorrent = await Add(id, "", fileAsBase64, true, torrent);
+
+        Log($"Adding nzb file {fileAsBase64}", newTorrent);
+
+        return newTorrent;
+    }
 
     public async Task<IList<TorrentClientAvailableFile>> GetAvailableFiles(String hash)
     {
